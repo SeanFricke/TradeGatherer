@@ -3,7 +3,6 @@ import requests
 from os import path
 import datetime as dt
 from tkinter import filedialog
-import tkinter as tk
 
 
 class MarketAPI:
