@@ -3,22 +3,14 @@ import pytest
 import api
 
 
-@pytest.fixture
-def test_clean_config():
-    if os.path.exists("config.txt"):
-        os.remove("config.txt")
+if os.path.exists("config.txt"):
+    os.remove("config.txt")
+testMarket = api.Make()
 
-
-def test_config_make(test_clean_config):
-    test_clean_config
-    testMarket = api.Make()
-    del testMarket
+def test_config_make():
     assert os.path.exists("config.txt")
 
 
-def test_apiData_make(test_clean_config):
-    test_clean_config
-    testMarket = api.Make()
+def test_apiData_make():
     dataDir = testMarket.dataDir
-    del testMarket
     assert os.path.exists(os.path.join(dataDir, "ApiData.json"))
