@@ -16,9 +16,9 @@ def getAPIPath(endpoint):
     return f"{base_url}/{version}/{endpoint}"  # Parse the string params into endpoint URL
 
 
-def getConfig():
+def readConfig():
     """
-    Reads the config file, and returns the data as separate variables
+    Reads the config file, and returns the settings as separate variables
 
     :return:
         | (:class:`datetime.datetime`) Timestamp
@@ -27,9 +27,9 @@ def getConfig():
     """
     with open("config.txt", 'r') as file:
         data = file.readlines()  # Read config
-    Timestamp, dataDirectory = data[:2]  # Gather required config lines into variables
+    Timestamp, dataDirectory = data[:2]  # Gather required config settings into variables
     dataDirectory = dataDirectory.strip()  # Strips the newline off of the stored API path
     alecaDirectory = data[2] if len(data) > 2 else ""  # Store Alecaframe data path if present
-    Timestamp = dt.datetime.strptime(self.__apiTimestamp[:-1],
+    Timestamp = dt.datetime.strptime(Timestamp[:-1],
                                      "%Y-%m-%d %H:%M:%S.%f")  # Cast timestamp to datetime
-    return Timestamp, dataDirectory, alecaDirectory
+    return Timestamp, dataDirectory, alecaDirectory  # Return settings
