@@ -1,5 +1,7 @@
 import json
 import os
+from pathlib import Path
+
 import pandas as pd
 import numpy as np
 import utils
@@ -12,9 +14,9 @@ class Make:
         self.apiPath = ""  # Clear Data directory path
         temp, self.dataPath, self.afPath = utils.readConfig()  # Get data paths from config
         self.apiPath = self.dataPath + "/ApiData.json"  # Get local api path from data directory
-        with open(self.apiPath) as file:
-            self.apiData = json.dumps(file)
-            pass
-        # self.apiData = self.apiData[1]
-        # self.apiData = pd.read_json(self.apiPath)
-
+        raw_json_dict = json.loads(Path(self.apiPath).read_text())
+        self.apiData = pd.DataFrame()
+        for key in raw_json_dict["payload"]["items"]:
+            # Grabs the json entry and puts it into a Series object
+            # Casts the Series object into a Dataframe and then concats to the apiData.
+            self.apiData = pd.concat([self.apiData, pd.DataFrame([pd.Series(key)])])
