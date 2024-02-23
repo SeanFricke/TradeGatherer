@@ -30,14 +30,9 @@ class MarketAPI:
     def __apiSync(self, manualSync=False):
         """
         Checks if the local data needs to be synced with the API, depending on the age of the data.
+
+        :param manualSync: (:class:`bool`) Force the function to manually sync the API data to local
         """
-        with open(self.CONFIG_PATH, 'r') as file:
-            data = file.readlines()  # Read config
-        self.__apiTimestamp, self.dataDir = data[:2]  # Gather required config lines into variables
-        self.dataDir = self.dataDir.strip()  # Strips the newline off of the stored API path
-        self.alecaDir = data[2] if len(data) > 2 else ""  # Store Alecaframe data path if present
-        self.__apiTimestamp = dt.datetime.strptime(self.__apiTimestamp[:-1],
-                                                   "%Y-%m-%d %H:%M:%S.%f")  # Cast timestamp to datetime
         # If later than UPDATE_THRESHOLD days,
         # then sync the local API file to the API itself and write down new timestamp
         if self.__apiTimestamp <= self.timeAtOpen - self.UPDATE_THRESHOLD or manualSync:

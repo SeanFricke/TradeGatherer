@@ -1,10 +1,35 @@
+import datetime
+import datetime as dt
+
+
 def getAPIPath(endpoint):
     """
     Parses and returns an API URL from endpoint.
 
-    :param endpoint: :class:`String <str>` Endpoint modifier.
-    :return: :class:`String <str>` Parsed URL.
+    :param endpoint:
+        :class:`string` Endpoint modifier.
+    :return:
+        :class:`string` Parsed URL.
     """
     base_url = "https://api.warframe.market"  # warframe.market base API URL
     version = "v1"  # Necessary version indicator for endpoint URL
     return f"{base_url}/{version}/{endpoint}"  # Parse the string params into endpoint URL
+
+
+def getConfig():
+    """
+    Reads the config file, and returns the data as separate variables
+
+    :return:
+        | (:class:`datetime.datetime`) Timestamp
+        | (:class:`string`) Data directory path
+        | (:class:`string`) Alecaframe directory path
+    """
+    with open("config.txt", 'r') as file:
+        data = file.readlines()  # Read config
+    Timestamp, dataDirectory = data[:2]  # Gather required config lines into variables
+    dataDirectory = dataDirectory.strip()  # Strips the newline off of the stored API path
+    alecaDirectory = data[2] if len(data) > 2 else ""  # Store Alecaframe data path if present
+    Timestamp = dt.datetime.strptime(self.__apiTimestamp[:-1],
+                                     "%Y-%m-%d %H:%M:%S.%f")  # Cast timestamp to datetime
+    return Timestamp, dataDirectory, alecaDirectory
