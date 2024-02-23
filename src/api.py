@@ -6,7 +6,7 @@ from tkinter import filedialog
 import utils
 
 
-class MarketAPI:
+class Make:
     UPDATE_THRESHOLD = dt.timedelta(days=10)  # Threshold in which to sync the local files
     CONFIG_PATH = "config.txt"  # Path to config file
     platform = "pc"  # Platform on which to get API data from
