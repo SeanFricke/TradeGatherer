@@ -20,7 +20,7 @@ class Make:
         if not path.exists(self.CONFIG_PATH):
             # Prompt for directory to store API data in
             self.dataDir = filedialog.askdirectory(mustexist=True, initialdir="..", title="Select a directory for "
-                                                                                            "the local data")
+                                                                                          "the local data")
             self.__updateConfig(self.timeAtOpen, self.dataDir, self.alecaDir)
             self.__apiSync(True)  # Make new config file, and use prefs for API syncing
         else:
@@ -46,7 +46,7 @@ class Make:
         apiPath = utils.getAPIPath("items")  # Get path to items endpoint of API
         dataPath = path.join(self.dataDir, "ApiData.json")  # Parse the API JSON file path from data directory
         with open(dataPath, "w") as file:
-            file.write(json.dumps(requests.get(apiPath).json()))  # Get item data from API and store to JSON file
+            json.dump(requests.get(apiPath).json(), file)  # Get item data from API and store to JSON file
 
     def __updateConfig(self, *data):
         """
