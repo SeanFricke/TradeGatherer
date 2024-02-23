@@ -21,11 +21,11 @@ class MarketAPI:
             # Prompt for directory to store API data in
             self.dataDir = filedialog.askdirectory(mustexist=True, initialdir="..", title="Select a directory for "
                                                                                             "the local data")
-            self.__updateConfig(self.timeAtOpen, self.dataDir, self.alecaDir)  # Update the config file
-            self.__apiSync(True)
+            self.__updateConfig(self.timeAtOpen, self.dataDir, self.alecaDir)
+            self.__apiSync(True)  # Make new config file, and use prefs for API syncing
         else:
             self.__apiSync()  # Sync data if needed
-            self.__updateConfig(self.__apiTimestamp, self.dataDir, self.alecaDir)
+            self.__updateConfig(self.__apiTimestamp, self.dataDir, self.alecaDir)  # Save any new timestamp to config
 
     def __apiSync(self, manualSync=False):
         """
@@ -33,6 +33,7 @@ class MarketAPI:
 
         :param manualSync: (:class:`bool`) Force the function to manually sync the API data to local
         """
+        self.__apiTimestamp, self.dataDir, self.alecaDir = utils.readConfig()  # Fetch config settings
         # If later than UPDATE_THRESHOLD days,
         # then sync the local API file to the API itself and write down new timestamp
         if self.__apiTimestamp <= self.timeAtOpen - self.UPDATE_THRESHOLD or manualSync:
