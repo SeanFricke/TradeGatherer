@@ -1,10 +1,8 @@
 import datetime as dt
 import json
 from os import path
-from tkinter import filedialog
-
 import requests
-
+from tkinter import filedialog
 import utils
 
 
@@ -21,7 +19,7 @@ class MarketAPI:
         # If config does not exist, create from scratch
         if not path.exists(self.CONFIG_PATH):
             # Prompt for directory to store API data in
-            self.dataDir = filedialog.askdirectory(mustexist=True, initialdir="Data", title="Select a directory for "
+            self.dataDir = filedialog.askdirectory(mustexist=True, initialdir="..", title="Select a directory for "
                                                                                             "the local data")
             self.__updateConfig(self.timeAtOpen, self.dataDir, self.alecaDir)  # Update the config file
             self.__apiSync(True)
