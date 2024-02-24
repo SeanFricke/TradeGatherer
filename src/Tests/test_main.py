@@ -1,6 +1,6 @@
 import pandas as pd
-
-import api, database, pytest
+import pytest
+from ..Utils import api, database
 
 
 class TestMain:
