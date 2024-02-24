@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from ..Utils import api, database
+from src.Utils import api, database
 
 
 class TestMain:

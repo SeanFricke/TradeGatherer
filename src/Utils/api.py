@@ -3,7 +3,7 @@ import json
 from os import path
 import requests
 from tkinter import filedialog
-import utils
+from src.Utils import utils
 
 
 class Make:

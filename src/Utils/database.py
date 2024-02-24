@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
-import utils
+from src.Utils import utils
 
 
 class Make:

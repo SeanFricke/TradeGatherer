@@ -1,4 +1,8 @@
-/src/config.txt
 /src/__pycache__/
-/Data/
+/src/Tests/__pycache__/
+/src/Utils/__pycache__/
+/src/Tests/config.txt
+/src/Data/
 /.idea/
+
+
