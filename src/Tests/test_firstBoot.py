@@ -1,6 +1,6 @@
 import os.path
 import pytest
-from ..Utils import api
+from src.Utils import api
 
 
 if os.path.exists("config.txt"):
