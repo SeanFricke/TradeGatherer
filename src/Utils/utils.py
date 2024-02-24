@@ -36,10 +36,10 @@ def readConfig():
                                      "%Y-%m-%d %H:%M:%S.%f")  # Cast timestamp to datetime
     return Timestamp, dataDirectory, alecaDirectory  # Return settings
 
-def getDFFromAPIJSON(JSON_text):
+def getDFFromAPIJSON(JSON_text, iter_name):
     data = pd.DataFrame()  # Assign the data attribute with an empty dataframe
     rawData = json.loads(JSON_text)  # Make dict from json response
-    for key in rawData["payload"]["items"]:
+    for key in rawData["payload"][iter_name]:
         # Grabs the json entry and puts it into a Series object
         # Casts the Series object into a Dataframe and then concats to the apiData.
         data = pd.concat([data, pd.DataFrame([pd.Series(key)])])

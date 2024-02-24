@@ -69,4 +69,4 @@ class Make:
         args = {"Platform": self.platform}  # Set request params
         headers = {"Include": "item"}  # Set request headers
         # Make GET request for item orders
-        return requests.get(ordersPath, params=args, headers=headers).json
+        return requests.get(ordersPath, params=args, headers=headers).text

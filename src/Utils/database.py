@@ -11,4 +11,8 @@ class Make:
         self.orderData = None
         temp, self.dataPath, self.afPath = utils.readConfig()  # Get data paths from config
         self.apiPath = self.dataPath + "/ApiData.json"  # Get local api path from data directory
-        self.apiData = utils.getDFFromAPIJSON(Path(self.apiPath).read_text())  # Create dataframe from api file
+        self.apiData = utils.getDFFromAPIJSON(Path(self.apiPath).read_text(), "items")  # Create dataframe from api file
+
+    def getOrderDF(self, API_obj, item):
+        rawData = API_obj.getItemOrders(item)
+        self.orderData = utils.getDFFromAPIJSON(rawData, "orders")
