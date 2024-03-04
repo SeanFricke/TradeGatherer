@@ -8,8 +8,7 @@ def getAPIPath(endpoint):
     """
     Parses and returns an API URL from endpoint.
 
-    :param endpoint:
-        :class:`string` Endpoint modifier.
+    :param endpoint: :class:`string` Endpoint modifier.
     :return:
         :class:`string` Parsed URL.
     """
@@ -35,6 +34,7 @@ def readConfig():
     Timestamp = dt.datetime.strptime(Timestamp[:-1],
                                      "%Y-%m-%d %H:%M:%S.%f")  # Cast timestamp to datetime
     return Timestamp, dataDirectory, alecaDirectory  # Return settings
+
 
 def getDFFromAPIJSON(JSON_text, iter_name):
     data = pd.DataFrame()  # Assign the data attribute with an empty dataframe
