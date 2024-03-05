@@ -22,10 +22,9 @@ class TestMain:
 
     def test_order_mean_sell(self, test_construct_database):
         item = "secura_dual_cestra"
-        self.test_database.getMeanPlat(item, True)
-        assert 1 < self.test_database.order_avg < 300
+        assert 1 < self.test_database.getMeanPlat(item, True) < 300
 
     def test_order_mean_buy(self, test_construct_database):
         item = "secura_dual_cestra"
-        self.test_database.getMeanPlat(item, False)
-        assert 1 < self.test_database.order_avg < 300
+
+        assert 1 < self.test_database.getMeanPlat(item, False) < 300
