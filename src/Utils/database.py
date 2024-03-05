@@ -11,10 +11,10 @@ class Make:
         self.order_Data = None
         self.order_Avg = None
 
-
         temp, self.data_path, self.af_Path = utils.readConfig()  # Get data paths from config
         self.api_Path = self.data_path + "/ApiData.json"  # Get local api path from data directory
-        self.api_Data = utils.getDFFromAPIJSON(Path(self.api_Path).read_text(), "items")  # Create dataframe from api file
+        self.api_Data = utils.getDFFromAPIJSON(Path(self.api_Path).read_text(),
+                                               "items")  # Create dataframe from api file
 
     def getOrderDF(self, API_obj, item):
         raw_data = API_obj.getItemOrders(item)
@@ -28,10 +28,9 @@ class Make:
         :param list_sell: :class:`bool` search for sell price.
         :return:
         """
-        self.getOrderDF(API_obj,item)
+        self.getOrderDF(API_obj, item)
         if list_sell:
             self.order_Avg = self.order_Data.loc[self.order_Data['order_type'] == "sell"]
         else:
             order_Avg = self.order_Data.loc[self.order_Data['order_type'] == "buy"]
         self.order_Avg = round(pd.DataFrame.aggregate(self.order_Data['platinum'], func='mean'), 0)
-
