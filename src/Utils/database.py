@@ -5,32 +5,29 @@ from src.Utils import utils
 
 class Make:
     def __init__(self):
-        self.af_Path = ""  # Clear Alecaframe data path
-        self.api_Path = ""  # Clear Data directory path
-        self.api_Data = None
-        self.order_Data = None
-        self.order_Avg = None
+        self.af_path = self.api_path = ""
+        self.api_data = self.api_obj = None
+        self.order_data = self.order_avg = None
 
-        temp, self.data_path, self.af_Path = utils.readConfig()  # Get data paths from config
-        self.api_Path = self.data_path + "/ApiData.json"  # Get local api path from data directory
-        self.api_Data = utils.getDFFromAPIJSON(Path(self.api_Path).read_text(),
+        temp, self.data_path, self.af_path = utils.readConfig()  # Get data paths from config
+        self.api_path = self.data_path + "/ApiData.json"  # Get local api path from data directory
+        self.api_data = utils.getDFFromAPIJSON(Path(self.api_path).read_text(),
                                                "items")  # Create dataframe from api file
 
-    def getOrderDF(self, API_obj, item):
-        raw_data = API_obj.getItemOrders(item)
-        self.order_Data = utils.getDFFromAPIJSON(raw_data, "orders")
+    def getOrderDF(self, item):
+        raw_data = self.api_obj.getItemOrders(item)
+        self.order_data = utils.getDFFromAPIJSON(raw_data, "orders")
 
-    def getMeanPlat(self, API_obj, item, list_sell):
+    def getMeanPlat(self, item, list_sell):
         """
         Takes order listings of an item and takes the average buy or sell price
-        :param API_obj: :class:`api` API market object.
         :param item: :class:`string` Item to get the mean price of.
         :param list_sell: :class:`bool` search for sell price.
         :return:
         """
-        self.getOrderDF(API_obj, item)
+        self.getOrderDF(item)
         if list_sell:
-            self.order_Avg = self.order_Data.loc[self.order_Data['order_type'] == "sell"]
+            self.order_avg = self.order_data.loc[self.order_data['order_type'] == "sell"]
         else:
-            order_Avg = self.order_Data.loc[self.order_Data['order_type'] == "buy"]
-        self.order_Avg = round(pd.DataFrame.aggregate(self.order_Data['platinum'], func='mean'), 0)
+            self.order_avg = self.order_data.loc[self.order_data['order_type'] == "buy"]
+        self.order_avg = round(pd.DataFrame.aggregate(self.order_data['platinum'], func='mean'), 0)

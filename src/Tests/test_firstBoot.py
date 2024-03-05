@@ -2,10 +2,10 @@ import os.path
 import pytest
 from src.Utils import api
 
-
 if os.path.exists("config.txt"):
     os.remove("config.txt")
 testMarket = api.Make()
+
 
 def test_config_make():
     assert os.path.exists("config.txt")
