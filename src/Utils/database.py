@@ -20,9 +20,13 @@ class Database:
     def getMeanPlat(self, item, list_sell):
         """
         Takes order listings of an item and takes the average buy or sell price
-        :param item: :class:`string` Item to get the mean price of.
-        :param list_sell: :class:`bool` search for sell price.
-        :return: :class:`long` average plat price
+
+        :param item: Item to get the mean price of.
+        :type item: str
+        :param list_sell: Search for sell price.
+        :type list_sell: bool
+        :return: Average plat price
+        :rtype: long
         """
         data = self.getOrderDF(item)
         if list_sell:
@@ -30,3 +34,18 @@ class Database:
         else:
             order_avg = data.loc[data['order_type'] == "buy"]
         return round(pd.DataFrame.aggregate(order_avg['platinum'], func='mean'), 0)
+
+    def searchItems(self, item_list):
+        """
+        Collects the orders of a list of item URLs and groups them into a dict of dataframes.
+
+        :param item_list: Collection of item urls to search for.
+        :type item_list: list
+        :return: Dict of order dataframes with key matching the item URL
+        :rtype: dict
+        """
+        order_collection = {}
+        for item in item_list:
+            order_collection[item] = self.getOrderDF(item)
+        return order_collection
+

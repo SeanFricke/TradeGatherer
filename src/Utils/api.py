@@ -31,7 +31,8 @@ class API:
         """
         Checks if the local data needs to be synced with the API, depending on the age of the data.
 
-        :param manual_sync: (:class:`bool`) Force the function to manually sync the API data to local
+        :param manual_sync: Force the function to manually sync the API data to local
+        :type manual_sync: bool
         """
         self.__api_timestamp, self.data_dir, self.aleca_dir = utils.readConfig()  # Fetch config settings
         # If later than UPDATE_THRESHOLD days,
@@ -52,7 +53,8 @@ class API:
         """
         Updates the config file with the given lines of data.
 
-        :param data: :class:`String <str>` Config data, per line.
+        :param data: Packed config data, one argument per line.
+        :type data: str
         """
         with open(self.CONFIG_PATH, 'w') as file:
             for i in data:
@@ -62,8 +64,10 @@ class API:
         """
         Returns a JSON response from the market with a list of orders of an item name.
 
-        :param url: :class:`String <str>` URL of item on warframe.market.
-        :return: :class:`Dictionary <builtins.dict>` JSON response.
+        :param url: URL of item on warframe.market.
+        :type url: str
+        :return: JSON response.
+        :rtype: dict
         """
         orders_path = utils.getAPIPath(f"/items/{url}/orders")  # Parse URL
         args = {"Platform": self.platform}  # Set request params

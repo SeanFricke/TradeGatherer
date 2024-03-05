@@ -28,3 +28,8 @@ class TestMain:
         item = "secura_dual_cestra"
 
         assert 1 < self.test_database.getMeanPlat(item, False) < 300
+
+    def test_item_search(self, test_construct_database):
+        items = ["strun_wraith_receiver", "mantis_set", "fluctus_limbs", "secura_dual_cestra"]
+        data = self.test_database.searchItems(items)
+        assert type(data) == dict and len(data) == len(items)
