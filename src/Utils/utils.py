@@ -41,6 +41,6 @@ def getDFFromAPIJSON(JSON_text, iter_name):
     rawData = json.loads(JSON_text)  # Make dict from json response
     for key in rawData["payload"][iter_name]:
         # Grabs the json entry and puts it into a Series object
-        # Casts the Series object into a Dataframe and then concats to the apiData.
+        # Casts the Series object into a Dataframe and then concats to the api_Data.
         data = pd.concat([data, pd.DataFrame([pd.Series(key)])])
     return data

@@ -12,5 +12,5 @@ def test_config_make():
 
 
 def test_apiData_make():
-    dataDir = testMarket.dataDir
+    dataDir = testMarket.data_dir
     assert os.path.exists(os.path.join(dataDir, "ApiData.json"))

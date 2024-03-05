@@ -13,19 +13,19 @@ class TestMain:
         self.test_database = database.Make()
 
     def test_database_class(self, test_construct_database):
-        assert type(self.test_database.apiData) == pd.DataFrame
+        assert type(self.test_database.api_Data) == pd.DataFrame
 
     def test_database_orders(self, test_construct_database):
         item = "secura_dual_cestra"
         self.test_database.getOrderDF(self.test_Market, item)
-        assert type(self.test_database.apiData) == pd.DataFrame
+        assert type(self.test_database.api_Data) == pd.DataFrame
 
     def test_order_mean_sell(self, test_construct_database):
         item = "secura_dual_cestra"
-        self.test_database.getMeanPlat(self.test_Market, item)
+        self.test_database.getMeanPlat(self.test_Market, item, True)
         assert 1 < self.test_database.order_Avg < 300
 
     def test_order_mean_buy(self, test_construct_database):
         item = "secura_dual_cestra"
-        self.test_database.getMeanPlat(self.test_Market, item, list_sell=False)
+        self.test_database.getMeanPlat(self.test_Market, item, False)
         assert 1 < self.test_database.order_Avg < 300
