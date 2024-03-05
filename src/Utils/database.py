@@ -3,7 +3,7 @@ import pandas as pd
 from src.Utils import utils
 
 
-class Make:
+class Database:
     def __init__(self, api_obj):
         self.af_path = self.api_path = ""
         self.api_obj = api_obj

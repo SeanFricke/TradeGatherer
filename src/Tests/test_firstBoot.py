@@ -4,7 +4,7 @@ from src.Utils import api
 
 if os.path.exists("config.txt"):
     os.remove("config.txt")
-testMarket = api.Make()
+testMarket = api.API()
 
 
 def test_config_make():
