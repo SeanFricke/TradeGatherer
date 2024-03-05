@@ -10,8 +10,7 @@ class TestMain:
     @pytest.fixture
     def test_construct_database(self):
         self.test_Market = api.Make()
-        self.test_database = database.Make()
-        self.test_database.api_obj = self.test_Market
+        self.test_database = database.Make(self.test_Market)
 
     def test_database_class(self, test_construct_database):
         assert type(self.test_database.api_data) == pd.DataFrame

@@ -4,9 +4,10 @@ from src.Utils import utils
 
 
 class Make:
-    def __init__(self):
+    def __init__(self, api_obj):
         self.af_path = self.api_path = ""
-        self.api_data = self.api_obj = None
+        self.api_obj = api_obj
+        self.api_data = None
         self.order_data = self.order_avg = None
 
         temp, self.data_path, self.af_path = utils.readConfig()  # Get data paths from config
