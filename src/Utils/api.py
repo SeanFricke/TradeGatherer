@@ -20,7 +20,7 @@ class API:
         if not path.exists(self.CONFIG_PATH):
             # Prompt for directory to store API data in
             self.data_dir = filedialog.askdirectory(mustexist=True, initialdir="..", title="Select a directory for "
-                                                                                          "the local data")
+                                                                                           "the local data")
             self.__updateConfig(self.time_at_open, self.data_dir, self.aleca_dir)
             self.__apiSync(True)  # Make new config file, and use prefs for API syncing
         else:
