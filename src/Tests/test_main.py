@@ -35,11 +35,10 @@ class TestMain:
         print(end_time - start_time)
         assert type(data) == dict and len(data) == len(items)
 
-    @pytest.mark.parametrize("threads", [i for i in range(1,5)])
     def test_item_async_search(self, test_construct_database, threads):
         start_time = time.time()
         items = ["strun_wraith_receiver", "mantis_set", "fluctus_limbs", "secura_dual_cestra"]
-        data = self.test_database.searchItemsAsync(items, threads)
+        data = self.test_database.searchItemsAsync(items)
         end_time = time.time()
         print(end_time - start_time)
         assert type(data) == dict and len(data) == len(items)
