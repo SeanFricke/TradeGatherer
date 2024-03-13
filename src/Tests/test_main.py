@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 import pytest
 from src.Utils import api, database
@@ -12,13 +14,10 @@ class TestMain:
         self.test_Market = api.API()
         self.test_database = database.Database(self.test_Market)
 
-    def test_database_class(self, test_construct_database):
-        assert type(self.test_database.api_data) == pd.DataFrame
-
     def test_database_orders(self, test_construct_database):
         item = "secura_dual_cestra"
-        self.test_database.getOrderDF(item)
-        assert type(self.test_database.api_data) == pd.DataFrame
+        _temp, data = self.test_database.getOrderDF(item)
+        assert type(data) == pd.DataFrame
 
     def test_order_mean_sell(self, test_construct_database):
         item = "secura_dual_cestra"
@@ -26,10 +25,24 @@ class TestMain:
 
     def test_order_mean_buy(self, test_construct_database):
         item = "secura_dual_cestra"
-
         assert 1 < self.test_database.getMeanPlat(item, False) < 300
 
     def test_item_search(self, test_construct_database):
+        start_time = time.time()
         items = ["strun_wraith_receiver", "mantis_set", "fluctus_limbs", "secura_dual_cestra"]
         data = self.test_database.searchItems(items)
+        end_time = time.time()
+        print(end_time - start_time)
         assert type(data) == dict and len(data) == len(items)
+
+    @pytest.mark.parametrize("threads", [i for i in range(1,5)])
+    def test_item_async_search(self, test_construct_database, threads):
+        start_time = time.time()
+        items = ["strun_wraith_receiver", "mantis_set", "fluctus_limbs", "secura_dual_cestra"]
+        data = self.test_database.searchItemsAsync(items, threads)
+        end_time = time.time()
+        print(end_time - start_time)
+        assert type(data) == dict and len(data) == len(items)
+
+
+
