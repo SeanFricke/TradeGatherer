@@ -54,3 +54,20 @@ def getDFFromAPIJSON(JSON_text, iter_name):
         data = pd.concat([data, pd.DataFrame([pd.Series(key)])])
     return data
 
+
+def getMeanPlat(item_df: pd.DataFrame, list_sell):
+    """
+    Takes dataframes of item orders and gets the average buy or sell price from them
+
+    :param item_df: Dataframe of item orders.
+    :param list_sell: Search for sell price.
+    :type list_sell: bool
+    :return: Average plat price
+    :rtype: long
+    """
+    _temp, data = item_df
+    if list_sell:
+        order_avg = data.loc[data['order_type'] == "sell"]
+    else:
+        order_avg = data.loc[data['order_type'] == "buy"]
+    return round(pd.DataFrame.aggregate(order_avg['platinum'], func='mean'), 0)
