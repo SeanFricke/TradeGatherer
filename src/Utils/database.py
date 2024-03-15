@@ -1,4 +1,3 @@
-import json
 import os.path
 import time
 from pathlib import Path
@@ -22,8 +21,6 @@ class Database:
         if not from_raw:
             raw_data = self.api_obj.getItemOrders(item)
         return item, utils.getDFFromAPIJSON(raw_data, "orders")
-
-
 
     def searchItems(self, item_list, cache=False):
         """

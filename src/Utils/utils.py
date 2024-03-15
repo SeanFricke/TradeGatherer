@@ -55,19 +55,46 @@ def getDFFromAPIJSON(JSON_text, iter_name):
     return data
 
 
-def getMeanPlat(item_df: pd.DataFrame, list_sell):
+def getMeanPlat(item_df: pd.DataFrame, get_sell):
     """
     Takes dataframes of item orders and gets the average buy or sell price from them
 
     :param item_df: Dataframe of item orders.
-    :param list_sell: Search for sell price.
-    :type list_sell: bool
+    :param get_sell: Search for sell price.
+    :type get_sell: bool
     :return: Average plat price
     :rtype: long
     """
-    _temp, data = item_df
-    if list_sell:
-        order_avg = data.loc[data['order_type'] == "sell"]
+    if get_sell:
+        order_avg = item_df.loc[item_df['order_type'] == "sell"]
     else:
-        order_avg = data.loc[data['order_type'] == "buy"]
+        order_avg = item_df.loc[item_df['order_type'] == "buy"]
     return round(pd.DataFrame.aggregate(order_avg['platinum'], func='mean'), 0)
+
+
+def getMinMax(orders_df_dict: dict, get_sell):
+    """
+    Takes item orders dataframe, finds mean plat of each, and finds the best sell/buy item and its value.
+
+    :param orders_df_dict: Dictionary of items and their order dataframe as its value.
+    :param get_sell: Get the max selling item in the list if true, otherwise get the min buying item in the list.
+    :type get_sell: bool
+    :return: best priced item name, best priced item price
+    :rtype: tuple[str, int]
+    """
+    mean_plat_dict = {}
+    for item_name in orders_df_dict:
+        # Get mean plat prices from dataframes
+        mean_plat_dict[item_name] = getMeanPlat(orders_df_dict[item_name], get_sell)
+
+    if get_sell:
+        # Get max sell item and value from mean prices
+        best_item_price, best_item_name = max(zip(mean_plat_dict.values(), mean_plat_dict.keys()))
+    else:
+        # Get min buy item and value from mean prices
+        best_item_price, best_item_name = min(zip(mean_plat_dict.values(), mean_plat_dict.keys()))
+
+    if best_item_price - round(best_item_price) == 0:  # If whole number, truncate decimal places
+        best_item_price = round(best_item_price)
+
+    return best_item_name, best_item_price  # Return best item name and price
