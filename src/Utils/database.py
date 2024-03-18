@@ -1,6 +1,9 @@
+import time
 from pathlib import Path
 import pandas as pd
 from src.Utils import utils
+import multiprocessing as mp
+import tqdm
 
 
 class Database:
@@ -15,7 +18,7 @@ class Database:
 
     def getOrderDF(self, item):
         raw_data = self.api_obj.getItemOrders(item)
-        return utils.getDFFromAPIJSON(raw_data, "orders")
+        return item, utils.getDFFromAPIJSON(raw_data, "orders")
 
     def getMeanPlat(self, item, list_sell):
         """
@@ -28,7 +31,7 @@ class Database:
         :return: Average plat price
         :rtype: long
         """
-        data = self.getOrderDF(item)
+        _temp, data = self.getOrderDF(item)
         if list_sell:
             order_avg = data.loc[data['order_type'] == "sell"]
         else:
@@ -46,6 +49,23 @@ class Database:
         """
         order_collection = {}
         for item in item_list:
-            order_collection[item] = self.getOrderDF(item)
+            _temp, order_collection[item] = self.getOrderDF(item)
         return order_collection
 
+    def searchItemsAsync(self, url_list):
+        """
+        Asynchronous version of `searchItems` method.
+        :param url_list: List of item URL's to search for
+        :type url_list: list[str]
+        :return:
+        :rtype: dict[pandas.DataFrame]
+        """
+        results_list = {}
+        api_num = 1
+        with mp.Pool(round(len(url_list) * 0.75)) as p:
+            for i, j in tqdm.tqdm(p.imap_unordered(self.getOrderDF, url_list), total=len(url_list)):
+                results_list[i] = j
+                if api_num % 3 == 0:
+                    time.sleep(1)
+                api_num += 1
+        return results_list

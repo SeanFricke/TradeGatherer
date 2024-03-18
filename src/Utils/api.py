@@ -5,7 +5,6 @@ import requests
 from tkinter import filedialog
 from src.Utils import utils
 
-
 class API:
     UPDATE_THRESHOLD = dt.timedelta(days=10)  # Threshold in which to sync the local files
     CONFIG_PATH = "config.txt"  # Path to config file
@@ -15,13 +14,12 @@ class API:
     data_dir = ""  # Directory in which
 
     def __init__(self):
-        self.time_at_open = dt.datetime.now()  # Get current time at process open, and save as variable
         # If config does not exist, create from scratch
         if not path.exists(self.CONFIG_PATH):
             # Prompt for directory to store API data in
             self.data_dir = filedialog.askdirectory(mustexist=True, initialdir="..", title="Select a directory for "
                                                                                            "the local data")
-            self.__updateConfig(self.time_at_open, self.data_dir, self.aleca_dir)
+            self.__updateConfig(dt.datetime.now(), self.data_dir, self.aleca_dir)
             self.__apiSync(True)  # Make new config file, and use prefs for API syncing
         else:
             self.__apiSync()  # Sync data if needed
@@ -37,7 +35,7 @@ class API:
         self.__api_timestamp, self.data_dir, self.aleca_dir = utils.readConfig()  # Fetch config settings
         # If later than UPDATE_THRESHOLD days,
         # then sync the local API file to the API itself and write down new timestamp
-        if self.__api_timestamp <= self.time_at_open - self.UPDATE_THRESHOLD or manual_sync:
+        if self.__api_timestamp <= dt.datetime.now() - self.UPDATE_THRESHOLD or manual_sync:
             self.__updateApiFile()
 
     def __updateApiFile(self):
@@ -73,4 +71,5 @@ class API:
         args = {"Platform": self.platform}  # Set request params
         headers = {"Include": "item"}  # Set request headers
         # Make GET request for item orders
-        return requests.get(orders_path, params=args, headers=headers).text
+        data = requests.get(orders_path, params=args, headers=headers).text
+        return data

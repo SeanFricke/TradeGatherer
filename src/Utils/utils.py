@@ -53,3 +53,4 @@ def getDFFromAPIJSON(JSON_text, iter_name):
         # Casts the Series object into a Dataframe and then concats to the api_data.
         data = pd.concat([data, pd.DataFrame([pd.Series(key)])])
     return data
+
