@@ -1,3 +1,4 @@
+import functools
 import os.path
 import time
 from pathlib import Path
@@ -68,3 +69,10 @@ class Database:
                     time.sleep(1)
                 api_num += 1
         return results_list
+
+    def getItemURLDict(self):
+        itemDict = {}
+        with open(self.api_path, "r") as f:
+            rawData = f.read()
+        api_df = utils.getDFFromAPIJSON(rawData, "items")
+        print(api_df)
