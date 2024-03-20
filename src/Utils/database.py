@@ -12,11 +12,30 @@ class Database:
     def __init__(self, api_obj: api):
         self.af_path = self.api_path = ""
         self.api_obj = api_obj
+        self.items_df = None
 
         temp, self.data_path, self.af_path = utils.readConfig()  # Get data paths from config
         self.api_path = self.data_path + "/ApiData.json"  # Get local api path from data directory
         self.api_data = utils.getDFFromAPIJSON(Path(self.api_path).read_text(),
                                                "items")  # Create dataframe from api file
+
+        self.__getItemURLDict()  # Create Item name/URL dict
+
+    def __getItemURLDict(self):
+        """
+        Creates a dictionary of each item's name and corresponding URL, saving it into the 'items_df' attribute.
+        """
+
+        # Open ApiData.json and read its data.
+        with open(self.api_path, "r") as f:
+            rawData = f.read()
+
+        api_df = utils.getDFFromAPIJSON(rawData, "items")  # Make dataframe from JSON data
+
+        # Process and clean dataframe
+        # Turn dataframe into dictionary of key-value pair of item name, with value of the item url.
+        api_df = api_df[["item_name", "url_name"]].set_index("item_name").to_dict()
+        self.items_df = api_df["url_name"]  # Save dictionary to attribute
 
     def getOrderDF(self, item: str, raw_data=None, from_raw=False):
         if not from_raw:
@@ -69,12 +88,5 @@ class Database:
                     time.sleep(1)
                 api_num += 1
         return results_list
-
-    def getItemURLDict(self):
-        with open(self.api_path, "r") as f:
-            rawData = f.read()
-        api_df = utils.getDFFromAPIJSON(rawData, "items")
-        api_df = api_df[["item_name", "url_name"]].set_index("item_name").to_dict()
-        return api_df["url_name"]
 
 
