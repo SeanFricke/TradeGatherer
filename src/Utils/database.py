@@ -16,7 +16,7 @@ class Database:
 
         temp, self.data_path, self.af_path = utils.readConfig()  # Get data paths from config
         self.api_path = self.data_path + "/ApiData.json"  # Get local api path from data directory
-        self.api_data = utils.getDFFromAPIJSON(Path(self.api_path).read_text(),
+        self.api_data = utils.getDFFromJSON(Path(self.api_path).read_text(),
                                                "items")  # Create dataframe from api file
 
         self.__getItemURLDict()  # Create Item name/URL dict
@@ -30,17 +30,22 @@ class Database:
         with open(self.api_path, "r") as f:
             rawData = f.read()
 
-        api_df = utils.getDFFromAPIJSON(rawData, "items")  # Make dataframe from JSON data
+        api_df = utils.getDFFromJSON(rawData, "items")  # Make dataframe from JSON data
 
         # Process and clean dataframe
         # Turn dataframe into dictionary of key-value pair of item name, with value of the item url.
         api_df = api_df[["item_name", "url_name"]].set_index("item_name").to_dict()
         self.items_df = api_df["url_name"]  # Save dictionary to attribute
 
-    def getOrderDF(self, item: str, raw_data=None, from_raw=False):
-        if not from_raw:
-            raw_data = self.api_obj.getItemOrders(item)
-        return item, utils.getDFFromAPIJSON(raw_data, "orders")
+    def getOrderDF(self, item_url: str):
+        """
+        Takes item url and gets the dataframe of the orders list of that item.
+        :param item_url: url of item to get the orders from
+        :return: url of item and its corresponding dataframe of orders
+        :rtype: tuple[str, pandas.DataFrame]
+        """
+        raw_data = self.api_obj.getItemOrders(item_url)  # Get order JSON of item from API
+        return item_url, utils.getDFFromJSON(raw_data, "orders")  # Turn order JSON into dataframe
 
     def searchOrders(self, item_list, cache=False):
         """
@@ -61,12 +66,12 @@ class Database:
                 if os.path.exists(item_cache_path):
                     with open(item_cache_path, "r") as f:
                         raw_data = f.read()
-                    _temp, order_collection[item] = self.getOrderDF(item, raw_data, from_raw=True)
+                    order_collection[item] = utils.getDFFromJSON(raw_data, "orders")
                 else:
                     raw_data = self.api_obj.getItemOrders(item)
                     with open(item_cache_path, "w") as f:
                         f.write(raw_data)
-                    _temp, order_collection[item] = self.getOrderDF(item, raw_data, from_raw=True)
+                    order_collection[item] = utils.getDFFromJSON(raw_data, "orders")
             else:
                 _temp, order_collection[item] = self.getOrderDF(item)
         return order_collection
