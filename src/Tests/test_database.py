@@ -29,7 +29,7 @@ class TestMain:
         data = self.test_database.searchOrders([item], cache=True)
         assert 1 < utils.getMeanPlat(data[item], False) < 300
 
-    def test_item_search(self, test_construct_database):
+    def test_order_search(self, test_construct_database):
         start_time = time.time()
         items = ["strun_wraith_receiver", "mantis_set", "fluctus_limbs", "secura_dual_cestra"]
         data = self.test_database.searchOrders(items)
@@ -37,7 +37,7 @@ class TestMain:
         print(end_time - start_time)
         assert type(data) == dict and len(data) == len(items)
 
-    def test_item_async_search(self, test_construct_database):
+    def test_order_async_search(self, test_construct_database):
         start_time = time.time()
         items = ["strun_wraith_receiver", "mantis_set", "fluctus_limbs", "secura_dual_cestra"]
         data = self.test_database.searchOrdersAsync(items)
@@ -50,6 +50,12 @@ class TestMain:
         data = self.test_database.searchOrders(items, cache=True)
         name, price = utils.getMinMax(data, True)
         assert name == "secura_dual_cestra" and 100 > price > 30
+
+    def test_item_search(self, test_construct_database):
+        query = "magus"
+        results = self.test_database.searchItems(query).index.tolist()[:5]
+        assert results == ['Magus Vigor', 'Magus Repair', 'Magus Glitch', 'Magus Overload', 'Magus Anomaly']
+
 
 
 
