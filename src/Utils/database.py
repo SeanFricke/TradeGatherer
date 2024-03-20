@@ -17,7 +17,7 @@ class Database:
         temp, self.data_path, self.af_path = utils.readConfig()  # Get data paths from config
         self.api_path = self.data_path + "/ApiData.json"  # Get local api path from data directory
         self.api_data = utils.getDFFromJSON(Path(self.api_path).read_text(),
-                                               "items")  # Create dataframe from api file
+                                            "items")  # Create dataframe from api file
 
         self.__getItemURLDict()  # Create Item name/URL dict
 
@@ -79,7 +79,7 @@ class Database:
     def searchOrdersAsync(self, url_list):
         """
         Asynchronous version of `searchItems` method.
-        :param url_list: List of item URL's to search for
+        :param url_list: List of item URLs to search for
         :type url_list: list[str]
         :return:
         :rtype: dict[pandas.DataFrame]
@@ -116,5 +116,3 @@ class Database:
         search_results_df.set_index("Name", inplace=True)
 
         return search_results_df
-
-
