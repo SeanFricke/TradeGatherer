@@ -1,4 +1,3 @@
-import functools
 import os.path
 import time
 from pathlib import Path
@@ -6,13 +5,14 @@ import pandas as pd
 from src.Utils import utils, api
 import multiprocessing as mp
 import tqdm
+import rapidfuzz as rf
 
 
 class Database:
     def __init__(self, api_obj: api):
         self.af_path = self.api_path = ""
         self.api_obj = api_obj
-        self.items_df = None
+        self.items_df = {}
 
         temp, self.data_path, self.af_path = utils.readConfig()  # Get data paths from config
         self.api_path = self.data_path + "/ApiData.json"  # Get local api path from data directory
@@ -93,5 +93,28 @@ class Database:
                     time.sleep(1)
                 api_num += 1
         return results_list
+
+    def searchItems(self, search_string: str, scorer=rf.fuzz.partial_token_ratio, limit=100):
+        """
+        Find related items to a search string, and return a dataframe of the resulting items and corresponding URL
+
+        :param search_string: Search query
+        :param limit: Max number of results to find
+        :type limit: int
+        :param scorer: rapidfuzz.fuzz scorer to use with searching.
+        :return: Dataframe of top 100 related item names and their urls
+        :rtype: pandas.DataFrame
+        """
+        search_results_df = pd.DataFrame(columns=["Name", "URL"], index=["Name"])
+        search_results = rf.process.extract(search_string, self.items_df.keys(), scorer=scorer,
+                                            limit=limit, score_cutoff=100, processor=rf.utils.default_process)
+        for result in search_results:
+            result_series = pd.Series(data={"Name": result[0], "URL": self.items_df[result[0]]})
+            search_results_df = pd.concat([search_results_df, result_series.to_frame().T])
+
+        search_results_df.dropna(inplace=True)
+        search_results_df.set_index("Name", inplace=True)
+
+        return search_results_df
 
 
