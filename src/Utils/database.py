@@ -23,7 +23,7 @@ class Database:
             raw_data = self.api_obj.getItemOrders(item)
         return item, utils.getDFFromAPIJSON(raw_data, "orders")
 
-    def searchItems(self, item_list, cache=False):
+    def searchOrders(self, item_list, cache=False):
         """
         Collects the orders of a list of item URLs and groups them into a dict of dataframes.
 
@@ -52,7 +52,7 @@ class Database:
                 _temp, order_collection[item] = self.getOrderDF(item)
         return order_collection
 
-    def searchItemsAsync(self, url_list):
+    def searchOrdersAsync(self, url_list):
         """
         Asynchronous version of `searchItems` method.
         :param url_list: List of item URL's to search for
