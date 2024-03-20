@@ -71,8 +71,10 @@ class Database:
         return results_list
 
     def getItemURLDict(self):
-        itemDict = {}
         with open(self.api_path, "r") as f:
             rawData = f.read()
         api_df = utils.getDFFromAPIJSON(rawData, "items")
-        print(api_df)
+        api_df = api_df[["item_name", "url_name"]].set_index("item_name").to_dict()
+        return api_df["url_name"]
+
+
