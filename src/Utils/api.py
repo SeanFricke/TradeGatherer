@@ -5,6 +5,7 @@ import requests
 from tkinter import filedialog
 from src.Utils import utils
 
+
 class API:
     UPDATE_THRESHOLD = dt.timedelta(days=10)  # Threshold in which to sync the local files
     CONFIG_PATH = "config.txt"  # Path to config file
@@ -19,7 +20,7 @@ class API:
             # Prompt for directory to store API data in
             self.data_dir = filedialog.askdirectory(mustexist=True, initialdir="..", title="Select a directory for "
                                                                                            "the local data")
-            self.__updateConfig(dt.datetime.now(), self.data_dir, self.aleca_dir)
+            self.__updateConfig(dt.datetime.strftime(dt.datetime.now(), "%Y-%m-%d %H:%M:%S.%f"), self.data_dir, self.aleca_dir)
             self.__apiSync(True)  # Make new config file, and use prefs for API syncing
         else:
             self.__apiSync()  # Sync data if needed

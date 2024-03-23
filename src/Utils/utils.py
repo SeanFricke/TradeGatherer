@@ -35,7 +35,7 @@ def readConfig():
     return Timestamp, dataDirectory, alecaDirectory  # Return settings
 
 
-def getDFFromAPIJSON(JSON_text, iter_name):
+def getDFFromJSON(JSON_text, iter_name):
     """
     Takes JSON encoded text and parses it into a dataframe object.
 
