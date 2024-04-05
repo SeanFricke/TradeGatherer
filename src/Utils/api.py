@@ -1,3 +1,4 @@
+import datetime
 import datetime as dt
 import json
 from os import path
@@ -24,7 +25,7 @@ class API:
             self.__apiSync(True)  # Make new config file, and use prefs for API syncing
         else:
             self.__apiSync()  # Sync data if needed
-            self.__updateConfig(self.__api_timestamp, self.data_dir, self.aleca_dir)  # Save any new timestamp to config
+            self.__updateConfig(dt.datetime.strftime(dt.datetime.now(), "%Y-%m-%d %H:%M:%S.%f"), self.data_dir, self.aleca_dir)  # Save any new timestamp to config
 
     def __apiSync(self, manual_sync=False):
         """
