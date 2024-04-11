@@ -1,49 +1,79 @@
 import sys
 
-import PyQt5.QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+import PyQt6.QtCore
+from PyQt6.QtCore import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtGui import *
 
 from src.Utils import api, database, utils
+from src.GUI import custom_widgets
 
 
-class mainMenu(QApplication):
+class mainMenu(QMainWindow):
+    def __init__(self, api_obj: api, db_obj: database, fullscreen: bool = False, parent=None):
+        """
+        Constructs the main menu.
+        :param api_obj: API object from api.py
+        :param db_obj: Database object from database.py
+        :param fullscreen: Start in fullscreen
+        """
+        super().__init__(parent)
 
-    def __init__(self, api_obj: api.API, db_obj: database.Database):
-        super().__init__(sys.argv)
-        self.__api = api_obj
-        self.__db = db_obj
-        self.screen = self.primaryScreen()
-        self.screen_size = self.screen.size()
-        self.win = QMainWindow()
+        # --Core constructors--
+        self.__api, self.__db = api_obj, db_obj  # Utils
+        self.app = QApplication(sys.argv)
+        self.NativeScreen = self.app.primaryScreen()
 
-        self.__items_box = QGroupBox(self.win)
-        self.__items_box_layout = QVBoxLayout()
-        self.create_item_buttons()
-        self.__items_box.setLayout(self.__items_box_layout)
-        self.__items_box.setFixedWidth(self.screen_size.width())
+        # --Widget constructors--
+        self.item_button_box = QWidget()
+        self.item_button_layout = QVBoxLayout()
+        self.scroll_area = QScrollArea()
+        self.container = QWidget()
+        self.container_layout = QVBoxLayout()
+        self.input = QLineEdit()
 
-        self.scroll_area = QScrollArea(self.win)
-        self.scroll_area.setWidget(self.__items_box)
-        self.scroll_area.setFixedSize(self.screen_size)
+        # --Window settings--
+        self.resize(self.NativeScreen.size())
 
-    def main(self, fullscreen: bool):
-        self.win.setGeometry(0, 0, self.screen_size.width(), self.screen_size.height())
-        self.win.setWindowTitle("Trade Gatherer")
+        # -- Variable init--
+        self.item_buttons = []
 
-        if fullscreen:
-            self.win.showFullScreen()
-        else:
-            self.win.show()
-        sys.exit(self.exec_())
-
-    def create_item_buttons(self):
-        button_iter = 0
+        # --Button list creation--
         for item in self.__db.items_df.keys():
-            button = QPushButton(self.win)
-            button.resize(self.screen_size.width(), 200)
-            button.setText(item)
-            button.setCheckable(True)
-            self.__items_box_layout.addWidget(button, button_iter)
-            button_iter += 1
+            item = custom_widgets.itemButtonList(100, item)  # Create button
+            self.item_button_layout.addWidget(item)
+            self.item_buttons.append(item)
+
+        # -- Item button box settings--
+        spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.item_button_layout.addItem(spacer)
+        self.item_button_box.setLayout(self.item_button_layout)
+
+        # --Scroll area settings--
+        self.scroll_area.setWidget(self.item_button_box)
+        self.scroll_area.setWidgetResizable(True)
+
+        # --Search bar settings--
+        self.input.setFixedHeight(50)
+        self.input.setFont(QFont("Arial", 30))
+        self.input.textChanged.connect(self.update_items)
+
+        # --Search Bar completer settings
+        self.completer = QCompleter(self.__db.items_df)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.input.setCompleter(self.completer)
+
+        # --Main container settings--
+        self.container_layout.addWidget(self.input)
+        self.container_layout.addWidget(self.scroll_area)
+        self.container.setLayout(self.container_layout)
+
+        self.setCentralWidget(self.container)
+
+    def update_items(self, text):
+
+        for widget in self.item_buttons:
+            if text.lower() in widget.objectName().lower():
+                widget.show()
+            else:
+                widget.hide()

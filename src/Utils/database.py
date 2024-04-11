@@ -18,7 +18,6 @@ class Database:
         self.api_path = self.data_path + "/ApiData.json"  # Get local api path from data directory
         self.api_data = utils.getDFFromJSON(Path(self.api_path).read_text(),
                                             "items")  # Create dataframe from api file
-
         self.__getItemURLDict()  # Create Item name/URL dict
 
     def __getItemURLDict(self):
@@ -31,6 +30,8 @@ class Database:
             rawData = f.read()
 
         api_df = utils.getDFFromJSON(rawData, "items")  # Make dataframe from JSON data
+
+        api_df.sort_values(by=["item_name"],inplace=True)
 
         # Process and clean dataframe
         # Turn dataframe into dictionary of key-value pair of item name, with value of the item url.
