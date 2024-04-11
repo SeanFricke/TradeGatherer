@@ -1,9 +1,12 @@
+import os
 import sys
 
 import PyQt6.QtCore
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
+
+import rapidfuzz as rf
 
 from src.Utils import api, database, utils
 from src.GUI import custom_widgets
@@ -19,18 +22,24 @@ class mainMenu(QMainWindow):
         """
         super().__init__(parent)
 
+        # --Static asset init--
+        self.AF_logo = QIcon()
+        self.AF_logo.addFile("../Static/Main Menu/Alecaframe_Icon.png")
+
         # --Core constructors--
         self.__api, self.__db = api_obj, db_obj  # Utils
         self.app = QApplication(sys.argv)
         self.NativeScreen = self.app.primaryScreen()
 
         # --Widget constructors--
-        self.item_button_box = QWidget()
-        self.item_button_layout = QVBoxLayout()
-        self.scroll_area = QScrollArea()
-        self.container = QWidget()
-        self.container_layout = QVBoxLayout()
-        self.input = QLineEdit()
+        self.item_button_box = QWidget()  # Item button box
+        self.item_button_layout = QVBoxLayout()  # Item button box (Layout)
+        self.scroll_area = QScrollArea()  # Scroll Area
+        self.container = QWidget()  # Container
+        self.container_layout = QVBoxLayout()  # Container (Layout)
+        self.input = QLineEdit()  # Search bar
+        self.tool = QToolBar()  # Tool Bar
+        self.af_dir_pick = QPushButton()
 
         # --Window settings--
         self.resize(self.NativeScreen.size())
@@ -58,12 +67,21 @@ class mainMenu(QMainWindow):
         self.input.setFont(QFont("Arial", 30))
         self.input.textChanged.connect(self.update_items)
 
+        # --AF file button settings--
+        self.af_dir_pick.setIcon(self.AF_logo)
+        self.af_dir_pick.clicked.connect(self.set_AF_dir)
+
+        # --Tool bar settings--
+        self.tool.addWidget(self.af_dir_pick)
+
         # --Search Bar completer settings
         self.completer = QCompleter(self.__db.items_df)
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.completer.setCompletionMode(QCompleter.CompletionMode.InlineCompletion)
         self.input.setCompleter(self.completer)
 
         # --Main container settings--
+        self.container_layout.addWidget(self.tool)
         self.container_layout.addWidget(self.input)
         self.container_layout.addWidget(self.scroll_area)
         self.container.setLayout(self.container_layout)
@@ -72,8 +90,15 @@ class mainMenu(QMainWindow):
 
     def update_items(self, text):
 
+        results = self.__db.searchItems(text, scorer=rf.fuzz.token_set_ratio)
+
         for widget in self.item_buttons:
-            if text.lower() in widget.objectName().lower():
+            if widget.objectName() in results:
                 widget.show()
             else:
                 widget.hide()
+
+    def set_AF_dir(self):
+        self.__db.af_path = QFileDialog.getExistingDirectory(parent=self.af_dir_pick,
+                                                             caption="Select AlecaFrame export directory",
+                                                             directory=os.environ.get("USERPROFILE") + "/Documents")

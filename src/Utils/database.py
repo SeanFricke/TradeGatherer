@@ -31,7 +31,7 @@ class Database:
 
         api_df = utils.getDFFromJSON(rawData, "items")  # Make dataframe from JSON data
 
-        api_df.sort_values(by=["item_name"],inplace=True)
+        api_df.sort_values(by=["item_name"], inplace=True)
 
         # Process and clean dataframe
         # Turn dataframe into dictionary of key-value pair of item name, with value of the item url.
@@ -95,7 +95,7 @@ class Database:
                 api_num += 1
         return results_list
 
-    def searchItems(self, search_string: str, scorer=rf.fuzz.partial_token_ratio, limit=100):
+    def searchItems(self, search_string: str, scorer: rf.fuzz = rf.fuzz.partial_token_ratio, limit=100):
         """
         Find related items to a search string, and return a dataframe of the resulting items and corresponding URL
 
@@ -103,8 +103,8 @@ class Database:
         :param limit: Max number of results to find
         :type limit: int
         :param scorer: rapidfuzz.fuzz scorer to use with searching.
-        :return: Dataframe of top 100 related item names and their urls
-        :rtype: pandas.DataFrame
+        :return: List of top 100 related item names
+        :rtype: list[str]
         """
         search_results_df = pd.DataFrame(columns=["Name", "URL"], index=["Name"])
         search_results = rf.process.extract(search_string, self.items_df.keys(), scorer=scorer,
@@ -116,4 +116,5 @@ class Database:
         search_results_df.dropna(inplace=True)
         search_results_df.set_index("Name", inplace=True)
 
-        return search_results_df
+        search_results_list = search_results_df.index.tolist()
+        return search_results_list
