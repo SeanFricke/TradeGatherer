@@ -42,6 +42,11 @@ class mainMenu(QMainWindow):
         self.completer = QCompleter(self.__db.items_df)  # Search bar autocompleter
         self.tool = QToolBar()  # Tool Bar
         self.af_dir_pick = QPushButton()  # AF directory selector button
+        self.search_button = QPushButton()
+        self.exit_button = QPushButton()
+        self.bottom_section_box = QWidget()
+        self.bottom_section_layout = QHBoxLayout()
+
 
         # --Window settings--
         self.resize(self.NativeScreen.size())
@@ -62,10 +67,22 @@ class mainMenu(QMainWindow):
             self.item_button_layout.addWidget(item_obj)  # Add button to layout
             self.item_buttons.append(item_obj)  # Append button object to list
 
-        # -- Item button box settings--
+        # -- Button settings--
         spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.item_button_layout.addItem(spacer)  # Add spacer to button list layout
         self.item_button_box.setLayout(self.item_button_layout)  # Set button list to use corresponding layout
+        self.search_button.setText("Search")
+        self.search_button.setFixedSize(400, 25)
+        self.exit_button.setText("Exit")
+        self.exit_button.setFixedSize(50, 25)
+        self.exit_button.clicked.connect(lambda x: sys.exit())
+        self.bottom_section_layout.addSpacing(round(self.NativeScreen.size().width() * 0.35))
+        self.bottom_section_layout.addWidget(self.search_button)
+        self.bottom_section_layout.addSpacing(round(self.NativeScreen.size().width() * 0.3))
+        self.bottom_section_layout.addWidget(self.exit_button)
+
+        # self.bottom_section_layout.insertItem(1, spacer)
+        self.bottom_section_box.setLayout(self.bottom_section_layout)
 
         # --Scroll area settings--
         self.scroll_area.setWidget(self.item_button_box)  # Add button list to scroll area
@@ -91,6 +108,7 @@ class mainMenu(QMainWindow):
         self.container_layout.addWidget(self.tool)  # Add toolbar to layout
         self.container_layout.addWidget(self.input)  # Add searchbar to layout
         self.container_layout.addWidget(self.scroll_area)  # Add button scroll area to layout
+        self.container_layout.addWidget(self.bottom_section_box)
         self.container.setLayout(self.container_layout)  # Set container to use layout
 
         self.setCentralWidget(self.container)  # Attach container to main window
