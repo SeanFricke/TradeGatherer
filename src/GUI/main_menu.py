@@ -45,6 +45,7 @@ class mainMenu(QMainWindow):
 
         # --Window settings--
         self.resize(self.NativeScreen.size())
+        self.setWindowTitle("TradeGatherer")
 
         # -- Variable init--
         self.item_buttons = []
@@ -84,7 +85,6 @@ class mainMenu(QMainWindow):
 
         # --Search Bar completer settings
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)  # Make completion case-insensitive
-        self.completer.setCompletionMode(QCompleter.CompletionMode.InlineCompletion)  # Set completion to be inline
         self.input.setCompleter(self.completer)  # Attach completer to searchbar
 
         # --Main container settings--
