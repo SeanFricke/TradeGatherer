@@ -1,10 +1,9 @@
 import os
 import sys
 
-import PyQt6.QtCore
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
-from PyQt6.QtGui import *
+from PyQt6.QtGui import QIcon, QPixmap, QFont
 
 import rapidfuzz as rf
 
@@ -12,19 +11,14 @@ from src.Utils import api, database, utils
 from src.GUI import custom_widgets
 
 
-class mainMenu(QMainWindow):
-    def __init__(self, api_obj: api, db_obj: database, fullscreen: bool = False, parent=None):
+class MainWindow(QMainWindow):
+    def __init__(self, api_obj: api, db_obj: database, parent=None):
         """
         Constructs the main menu.
         :param api_obj: API object from api.py
         :param db_obj: Database object from database.py
-        :param fullscreen: Start in fullscreen
         """
-        super().__init__(parent)
-
-        # --Static asset init--
-        self.AF_logo = QIcon()  # Alecaframe logo declaration
-        self.AF_logo.addFile("../Static/Main Menu/Alecaframe_Icon.png")  # AlecaFrame logo assignment
+        super(MainWindow, self).__init__(parent)
 
         # --Core constructors--
         self.__api, self.__db = api_obj, db_obj  # Utils
@@ -32,33 +26,72 @@ class mainMenu(QMainWindow):
         self.NativeScreen = self.app.primaryScreen()  # Native screen info
 
         # --Widget constructors--
-        self.item_buttons_group = QButtonGroup(self)
+        self.title_label = QLabel()
+        self.af_dir_pick = QPushButton()  # AF directory selector button
+        self.tool = QToolBar()  # Tool Bar
+        self.input = QLineEdit()  # Search bar
+        self.completer = QCompleter(self.__db.items_df)  # Search bar autocompleter
+        self.item_buttons_group = QButtonGroup()
         self.item_button_box = QWidget()  # Item button box
         self.item_button_layout = QVBoxLayout()  # Item button box (Layout)
         self.scroll_area = QScrollArea()  # Scroll Area
         self.container = QWidget()  # Container
         self.container_layout = QVBoxLayout()  # Container (Layout)
-        self.input = QLineEdit()  # Search bar
-        self.completer = QCompleter(self.__db.items_df)  # Search bar autocompleter
-        self.tool = QToolBar()  # Tool Bar
-        self.af_dir_pick = QPushButton()  # AF directory selector button
         self.search_button = QPushButton()
         self.exit_button = QPushButton()
         self.bottom_section_box = QWidget()
         self.bottom_section_layout = QHBoxLayout()
+
+        # --Static asset init--
+        self.AF_logo = QIcon("../Static/Main Menu/Alecaframe_Icon.png")  # Alecaframe logo
+        self.title_pixmap = QPixmap("../Static/Main Menu/TradGathererLogo_Wide_XL.png").scaledToHeight(100)
+
+        # -- Stylesheets--
+        self.TITLE_STYLE = """
+        QLabel { background-color: #0537ac }
+        """
+
+        # --Variable init--
+        self.item_buttons = []
+        self.selected_items = []
+
+        # --Constants init--
+        self.TITLE_SIZE = QSize(self.NativeScreen.size().width(), self.title_pixmap.size().height())
+        self.AF_LOGO_SIZE = QSize(25, 25)
 
 
         # --Window settings--
         self.resize(self.NativeScreen.size())
         self.setWindowTitle("TradeGatherer")
 
-        # -- Variable init--
-        self.item_buttons = []
-        self.selected_items = []
+        # --Title bar settings--
+        self.title_label.setPixmap(self.title_pixmap)
+        self.title_label.setFixedSize(self.TITLE_SIZE)
+        self.title_label.setStyleSheet(self.TITLE_STYLE)
+        self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+
+        # --AF file button settings--
+        self.af_dir_pick.setIcon(self.AF_logo)  # Set button icon to AF logo
+        self.af_dir_pick.setIconSize(self.AF_LOGO_SIZE)
+        self.af_dir_pick.clicked.connect(self.set_AF_dir)  # Connect file dialog prompt to click signal
+
+        # --Tool bar settings--
+        self.tool.addWidget(self.af_dir_pick)  # Add AF dir select button to toolbar
+
+        # --Search bar settings--
+        self.input.setFixedHeight(50)  # Set height size of searchbar
+        self.input.setFont(QFont("Arial", 30))  # Set font of searchbar
+        self.input.textChanged.connect(self.update_items)  # Connect button list updater to text change signal
+
+        # --Search Bar completer settings
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)  # Make completion case-insensitive
+        self.input.setCompleter(self.completer)  # Attach completer to searchbar
 
         # --Button group settings--
         self.item_buttons_group.setExclusive(False)
-        self.item_buttons_group.buttonToggled.connect(lambda button, isToggled: self.selectItemButton(isToggled, button.objectName()))
+        self.item_buttons_group.buttonToggled.connect(
+            lambda button, isToggled: self.selectItemButton(isToggled, button.objectName()))
 
         # --Button list creation--
         for item in self.__db.items_df.keys():
@@ -81,30 +114,15 @@ class mainMenu(QMainWindow):
         self.bottom_section_layout.addSpacing(round(self.NativeScreen.size().width() * 0.3))
         self.bottom_section_layout.addWidget(self.exit_button)
 
-        # self.bottom_section_layout.insertItem(1, spacer)
-        self.bottom_section_box.setLayout(self.bottom_section_layout)
-
         # --Scroll area settings--
         self.scroll_area.setWidget(self.item_button_box)  # Add button list to scroll area
         self.scroll_area.setWidgetResizable(True)  # Make scroll area resizable
 
-        # --Search bar settings--
-        self.input.setFixedHeight(50)  # Set height size of searchbar
-        self.input.setFont(QFont("Arial", 30))  # Set font of searchbar
-        self.input.textChanged.connect(self.update_items)  # Connect button list updater to text change signal
-
-        # --AF file button settings--
-        self.af_dir_pick.setIcon(self.AF_logo)  # Set button icon to AF logo
-        self.af_dir_pick.clicked.connect(self.set_AF_dir)  # Connect file dialog prompt to click signal
-
-        # --Tool bar settings--
-        self.tool.addWidget(self.af_dir_pick)  # Add AF dir select button to toolbar
-
-        # --Search Bar completer settings
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)  # Make completion case-insensitive
-        self.input.setCompleter(self.completer)  # Attach completer to searchbar
+        # self.bottom_section_layout.insertItem(1, spacer)
+        self.bottom_section_box.setLayout(self.bottom_section_layout)
 
         # --Main container settings--
+        self.container_layout.addWidget(self.title_label)
         self.container_layout.addWidget(self.tool)  # Add toolbar to layout
         self.container_layout.addWidget(self.input)  # Add searchbar to layout
         self.container_layout.addWidget(self.scroll_area)  # Add button scroll area to layout

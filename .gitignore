@@ -1,6 +1,7 @@
 /src/__pycache__/
 /src/Tests/__pycache__/
 /src/Utils/__pycache__/
+/src/GUI/__pycache__/
 /src/Tests/config.txt
 /src/Data/
 /.idea/
