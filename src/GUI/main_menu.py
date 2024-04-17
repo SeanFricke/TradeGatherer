@@ -28,17 +28,22 @@ class MainWindow(QMainWindow):
         # --Widget constructors--
         self.title_label = QLabel()
         self.af_dir_pick = QPushButton()  # AF directory selector button
+        self.af_dir_pick.setObjectName("Element_Dark")
         self.tool = QToolBar()  # Tool Bar
         self.input = QLineEdit()  # Search bar
+        self.input.setObjectName("Element_Light")
         self.completer = QCompleter(self.__db.items_df)  # Search bar autocompleter
         self.item_buttons_group = QButtonGroup()
         self.item_button_box = QWidget()  # Item button box
+        self.item_button_box.setObjectName("Element_Dark")
         self.item_button_layout = QVBoxLayout()  # Item button box (Layout)
         self.scroll_area = QScrollArea()  # Scroll Area
         self.container = QWidget()  # Container
         self.container_layout = QVBoxLayout()  # Container (Layout)
         self.search_button = QPushButton()
+        self.search_button.setObjectName("Element_Dark")
         self.exit_button = QPushButton()
+        self.exit_button.setObjectName("Element_Dark")
         self.bottom_section_box = QWidget()
         self.bottom_section_layout = QHBoxLayout()
 
@@ -48,7 +53,12 @@ class MainWindow(QMainWindow):
 
         # -- Stylesheets--
         self.TITLE_STYLE = """
-        QLabel { background-color: #0537ac }
+        QLabel {background-color: #0537ac}
+        """
+        self.MAIN_STYLE = """
+        QMainWindow {background-color: #0537ac}
+        #Element_Light {background-color: #C3DBEC}
+        #Element_Dark {background-color:  #59A3F7}
         """
 
         # --Variable init--
@@ -56,13 +66,14 @@ class MainWindow(QMainWindow):
         self.selected_items = []
 
         # --Constants init--
-        self.TITLE_SIZE = QSize(self.NativeScreen.size().width(), self.title_pixmap.size().height())
+        self.TITLE_SIZE = QSize(self.NativeScreen.size().width() - 10, self.title_pixmap.size().height())
         self.AF_LOGO_SIZE = QSize(25, 25)
 
 
         # --Window settings--
         self.resize(self.NativeScreen.size())
         self.setWindowTitle("TradeGatherer")
+        self.setStyleSheet(self.MAIN_STYLE)
 
         # --Title bar settings--
         self.title_label.setPixmap(self.title_pixmap)
@@ -96,6 +107,7 @@ class MainWindow(QMainWindow):
         # --Button list creation--
         for item in self.__db.items_df.keys():
             item_obj = custom_widgets.itemButtonList(100, item)  # Create button
+            item_obj.setObjectName("Element_Light")
             self.item_buttons_group.addButton(item_obj)
             self.item_button_layout.addWidget(item_obj)  # Add button to layout
             self.item_buttons.append(item_obj)  # Append button object to list
